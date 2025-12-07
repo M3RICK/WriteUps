@@ -155,7 +155,7 @@ These write-ups document security research conducted in authorized, isolated lab
 ## Author
 
 **M3RICK**  
-Epitech Toulouse - Cybersecurity Specialization
+Epitech Toulouse
 
 ## License
 
