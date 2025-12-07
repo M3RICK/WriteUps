@@ -15,40 +15,72 @@ This repository contains professional security research documentation covering:
 
 ## Write-Ups
 
-### The Many Faced God
+This repository contains detailed penetration testing documentation organized by academic year and challenge type.
+
+### Tek3 - Chisel
+
+<details>
+<summary><b>Click to expand Tek3 Chisel write-ups</b></summary>
+
+#### The Many Faced God
 Network reconnaissance through SMB enumeration, NFS share exploitation, Redis database access, rsync file retrieval, SSH key manipulation, and TeamCity privilege escalation via PATH hijacking.
 
-**Key Techniques:** SMB/NFS enumeration, Redis exploitation, rsync abuse, TeamCity RCE
+**Key Techniques:** SMB/NFS enumeration, Redis exploitation, rsync abuse, TeamCity RCE  
+**Difficulty:** Advanced
 
-### Musa Troglodytarum
+---
+
+#### Musa Troglodytarum
 Web application analysis featuring hidden directory discovery, steganographic analysis for credential extraction, FTP brute-forcing, whitespace encoding decoding, and sudo vulnerability exploitation (CVE-2019-14287).
 
-**Key Techniques:** Steganography, whitespace encoding, FTP exploitation, sudo CVE-2019-14287
+**Key Techniques:** Steganography, whitespace encoding, FTP exploitation, sudo CVE-2019-14287  
+**Difficulty:** Intermediate
 
-### The Binding of Cyber
+---
+
+#### The Binding of Cyber
 Sequential port probing across 900+ ports, NFS share mounting, password-protected archive cracking, SSH key-based authentication, and Linux capability exploitation via tar binary abuse.
 
-**Key Techniques:** Extensive port scanning, NFS exploitation, capability abuse, tar privilege escalation
+**Key Techniques:** Extensive port scanning, NFS exploitation, capability abuse, tar privilege escalation  
+**Difficulty:** Intermediate
 
-### Trickster
+---
+
+#### Trickster
 SMB password cracking, web application command injection via Base64 encoding bypass, SSH port forwarding with Socat, internal service access, and privilege escalation through PATH hijacking on a misconfigured sudo binary.
 
-**Key Techniques:** SMB brute-force, command injection, Socat tunneling, PATH hijacking
+**Key Techniques:** SMB brute-force, command injection, Socat tunneling, PATH hijacking  
+**Difficulty:** Advanced
 
-### Fun with Functional
+---
+
+#### Fun with Functional
 Haskell-based web application exploitation, file upload restriction bypass using language-specific reverse shells, SSH key extraction, Flask application abuse with sudo, and privilege escalation through FLASK_APP environment variable manipulation.
 
-**Key Techniques:** File upload exploitation, Haskell reverse shell, Flask RCE, sudo env abuse
+**Key Techniques:** File upload exploitation, Haskell reverse shell, Flask RCE, sudo env abuse  
+**Difficulty:** Intermediate
 
-### Patience
+---
+
+#### Patience
 Cookie-based SQL injection with WAF bypass via hexadecimal encoding, web shell deployment, reverse shell establishment, SSH tunneling to internal Gitea service, 2FA bypass through database manipulation, webhook abuse, and Docker volume privilege escalation.
 
-**Key Techniques:** SQLi with encoding, WAF bypass, Gitea exploitation, 2FA bypass, Docker volume escape
+**Key Techniques:** SQLi with encoding, WAF bypass, Gitea exploitation, 2FA bypass, Docker volume escape  
+**Difficulty:** Advanced
 
-### TekPedago
+---
+
+#### TekPedago
 Local File Inclusion via PHP filter wrappers, Apache log poisoning for RCE, sudo privilege escalation through /usr/bin/env, Docker container detection, cron job exploitation for container escape, and host system compromise.
 
-**Key Techniques:** LFI exploitation, log poisoning, container escape, cron job abuse
+**Key Techniques:** LFI exploitation, log poisoning, container escape, cron job abuse  
+**Difficulty:** Advanced
+
+</details>
+
+---
+
+*More write-ups will be added as challenges are completed.*
 
 ## Technical Skills Demonstrated
 
