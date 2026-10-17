@@ -78,6 +78,19 @@ Local File Inclusion via PHP filter wrappers, Apache log poisoning for RCE, sudo
 
 </details>
 
+### HTB Sherlocks - DFIR
+
+<details>
+<summary><b>Click to expand HTB Sherlock write-ups</b></summary>
+
+#### Brutus
+Linux log forensics on a server compromised through SSH brute-force: separating noise from signal in `auth.log`, proving automation through volume and concurrency, PID pivoting, `auth.log`/`wtmp` correlation, backdoor account and persistence toolkit analysis, full timeline and MITRE ATT&CK mapping.
+
+**Key Techniques:** auth.log analysis, wtmp parsing, timeline reconstruction, MITRE ATT&CK mapping  
+**Difficulty:** Very Easy
+
+</details>
+
 ---
 
 *More write-ups will be added as challenges are completed.*
