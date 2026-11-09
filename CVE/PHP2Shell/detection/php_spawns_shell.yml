@@ -1,0 +1,34 @@
+title: PHP Process Spawning a Shell or Download Utility
+status: experimental
+description: >
+  A PHP runtime started a shell or a download/network utility. Expected outcome
+  of successful PHP2Shell exploitation, and of web shells in general. Overlaps
+  with existing SigmaHQ web shell rules; kept here for completeness.
+author: M3RICK
+date: 2026-10-29
+logsource:
+  category: process_creation
+  product: linux
+detection:
+  parent:
+    ParentImage|contains:
+      - '/php-fpm'
+      - '/php-cgi'
+      - '/lsphp'
+      - '/frankenphp'
+      - '/apache2'
+      - '/httpd'
+  child:
+    Image|endswith:
+      - '/sh'
+      - '/bash'
+      - '/dash'
+      - '/curl'
+      - '/wget'
+      - '/nc'
+      - '/python3'
+      - '/perl'
+  condition: parent and child
+falsepositives:
+  - Applications that legitimately call system() or exec() (image processing, mailers)
+level: high
