@@ -1,179 +1,56 @@
-# CTF Write-Ups Collection
+# Write-Ups
 
-A comprehensive collection of detailed penetration testing write-ups from various Capture The Flag challenges. Each document provides thorough analysis of vulnerabilities, exploitation techniques, and privilege escalation methodologies.
+Security write-ups: forensic investigations, a vulnerability analysis with detection rules, and CTF machines. Each one starts from the evidence and explains how every conclusion was reached.
 
-## Contents
+All documents are PDFs written in [Typst](https://typst.app). Sources are in the repository next to each PDF when available.
 
-This repository contains professional security research documentation covering:
+## Vulnerability analysis and detection
 
-- **Network Enumeration** - Service discovery and reconnaissance techniques
-- **Web Application Exploitation** - SQLi, LFI, command injection, file upload bypasses
-- **Privilege Escalation** - Linux capabilities, sudo misconfigurations, PATH hijacking
-- **Container Security** - Docker escape techniques and volume exploitation
-- **Authentication Bypass** - 2FA circumvention, credential extraction, session manipulation
-- **Reverse Engineering** - Binary analysis and system call exploitation
+| Write-up | Subject | Content |
+|----------|---------|---------|
+| [PHP2Shell](CVE/PHP2Shell/PHP2Shell-WriteUp.pdf) | CVE-2026-109618 and CVE-2026-109619, two memory corruption bugs in the PHP engine (unauthenticated RCE) | Root cause analysis from the vendor advisories and public research, attack surface, observable artifacts, and detection rules. Blue team perspective, no exploit code. |
 
-## Write-Ups
+Detection rules written for this analysis, in [`CVE/PHP2Shell/detection/`](CVE/PHP2Shell/detection):
 
-This repository contains detailed penetration testing documentation organized by academic year and challenge type.
+- `php_spawns_shell.yml`: Sigma rule, PHP process spawning a shell or a download utility
+- `php_worker_crash_burst.yml`: Sigma rule with correlation, burst of PHP worker segfaults or memory exhaustion
+- `php2shell_upload_progress.rules`: Suricata hunting rule, multipart POST carrying `PHP_SESSION_UPLOAD_PROGRESS`
 
-### Tek3 - Chisel
+## DFIR investigations (HTB Sherlocks)
 
-<details>
-<summary><b>Click to expand Tek3 Chisel write-ups</b></summary>
+| Write-up | Evidence | Content |
+|----------|----------|---------|
+| [Unit42](Sherlock/Unit42/Unit42-WriteUp.pdf) | Windows Sysmon logs (EVTX) | Workstation infected by a backdoored UltraVNC dropper. EVTX to JSON with `evtx_dump` and `jq`, malicious process identification (path, parent, double extension), Dropbox delivery confirmed by DNS and Mark of the Web, time stomping (event ID 2), two-stage MSI installation, timeline and MITRE ATT&CK mapping. |
+| [Brutus](Sherlock/Brutus/Brutus-WriteUp.pdf) | Linux `auth.log` and `wtmp` | Server compromised through SSH brute-force. Separating noise from signal, proving automation through volume and concurrency, PID pivoting, `auth.log` and `wtmp` correlation, backdoor account and persistence, timeline and MITRE ATT&CK mapping. |
 
-#### The Many Faced God
-Network reconnaissance through SMB enumeration, NFS share exploitation, Redis database access, rsync file retrieval, SSH key manipulation, and TeamCity privilege escalation via PATH hijacking.
+## CTF machines (Epitech security modules)
 
-**Key Techniques:** SMB/NFS enumeration, Redis exploitation, rsync abuse, TeamCity RCE  
-**Difficulty:** Advanced
+Boot-to-root machines solved during the Epitech security modules: reconnaissance, initial access, privilege escalation, remediation.
 
----
+### Third year (Chisel module)
 
-#### Musa Troglodytarum
-Web application analysis featuring hidden directory discovery, steganographic analysis for credential extraction, FTP brute-forcing, whitespace encoding decoding, and sudo vulnerability exploitation (CVE-2019-14287).
+| Write-up | Attack path |
+|----------|-------------|
+| [The Many Faced God](Tek3-Chisel/The-ManyFaced-God-WriteUp.pdf) | SMB and NFS enumeration, Redis access, rsync file retrieval, SSH key manipulation, TeamCity privilege escalation through PATH hijacking |
+| [Patience](Tek3-Chisel/Patience-WriteUp.pdf) | Cookie-based SQL injection with WAF bypass (hex encoding), web shell, SSH tunnel to an internal Gitea, 2FA bypass through the database, Docker volume privilege escalation |
+| [TekPedago](Tek3-Chisel/TekPedago-WriteUp.pdf) | LFI through PHP filter wrappers, Apache log poisoning to RCE, sudo `env` escalation, container escape through a cron job |
+| [Trickster](Tek3-Chisel/Trickster-WriteUp.pdf) | SMB password cracking, command injection with Base64 bypass, Socat port forwarding to an internal service, PATH hijacking on a sudo binary |
+| [Musa Troglodytarum](Tek3-Chisel/MusaTroglodytarum-WriteUp.pdf) | Hidden directory discovery, steganography, FTP brute-force, whitespace encoding, sudo CVE-2019-14287 |
+| [The Binding of Cyber](Tek3-Chisel/TheBindingOfCyber-WriteUp.pdf) | Port probing across 900+ ports, NFS share, archive cracking, SSH key authentication, Linux capability abuse through `tar` |
+| [Fun with Functional](Tek3-Chisel/FunWithFunctional-WriteUp.pdf) | Upload restriction bypass with a Haskell reverse shell, SSH key extraction, sudo Flask escalation through `FLASK_APP` |
 
-**Key Techniques:** Steganography, whitespace encoding, FTP exploitation, sudo CVE-2019-14287  
-**Difficulty:** Intermediate
+Slides presenting the module: [Presentation-Chisel-Module.pdf](Tek3-Chisel/Presentation-Chisel-Module.pdf)
 
----
+### Second year (Hydra module)
 
-#### The Binding of Cyber
-Sequential port probing across 900+ ports, NFS share mounting, password-protected archive cracking, SSH key-based authentication, and Linux capability exploitation via tar binary abuse.
-
-**Key Techniques:** Extensive port scanning, NFS exploitation, capability abuse, tar privilege escalation  
-**Difficulty:** Intermediate
-
----
-
-#### Trickster
-SMB password cracking, web application command injection via Base64 encoding bypass, SSH port forwarding with Socat, internal service access, and privilege escalation through PATH hijacking on a misconfigured sudo binary.
-
-**Key Techniques:** SMB brute-force, command injection, Socat tunneling, PATH hijacking  
-**Difficulty:** Advanced
-
----
-
-#### Fun with Functional
-Haskell-based web application exploitation, file upload restriction bypass using language-specific reverse shells, SSH key extraction, Flask application abuse with sudo, and privilege escalation through FLASK_APP environment variable manipulation.
-
-**Key Techniques:** File upload exploitation, Haskell reverse shell, Flask RCE, sudo env abuse  
-**Difficulty:** Intermediate
-
----
-
-#### Patience
-Cookie-based SQL injection with WAF bypass via hexadecimal encoding, web shell deployment, reverse shell establishment, SSH tunneling to internal Gitea service, 2FA bypass through database manipulation, webhook abuse, and Docker volume privilege escalation.
-
-**Key Techniques:** SQLi with encoding, WAF bypass, Gitea exploitation, 2FA bypass, Docker volume escape  
-**Difficulty:** Advanced
-
----
-
-#### TekPedago
-Local File Inclusion via PHP filter wrappers, Apache log poisoning for RCE, sudo privilege escalation through /usr/bin/env, Docker container detection, cron job exploitation for container escape, and host system compromise.
-
-**Key Techniques:** LFI exploitation, log poisoning, container escape, cron job abuse  
-**Difficulty:** Advanced
-
-</details>
-
-### HTB Sherlocks - DFIR
-
-<details>
-<summary><b>Click to expand HTB Sherlock write-ups</b></summary>
-
-#### Brutus
-Linux log forensics on a server compromised through SSH brute-force: separating noise from signal in `auth.log`, proving automation through volume and concurrency, PID pivoting, `auth.log`/`wtmp` correlation, backdoor account and persistence toolkit analysis, full timeline and MITRE ATT&CK mapping.
-
-**Key Techniques:** auth.log analysis, wtmp parsing, timeline reconstruction, MITRE ATT&CK mapping  
-**Difficulty:** Very Easy
-
-</details>
-
----
-
-*More write-ups will be added as challenges are completed.*
-
-## Technical Skills Demonstrated
-
-**Web Exploitation:**
-- SQL Injection (UNION-based, blind, error-based)
-- Local File Inclusion with PHP filters
-- Remote Code Execution via multiple vectors
-- File upload bypass techniques
-- Command injection with encoding bypasses
-
-**Network & Service Exploitation:**
-- SMB/NFS enumeration and exploitation
-- Redis database access
-- SSH tunneling and port forwarding
-- FTP brute-forcing
-- Internal service discovery
-
-**Privilege Escalation:**
-- Sudo misconfigurations (NOPASSWD, CVE exploits)
-- Linux capabilities abuse
-- PATH hijacking techniques
-- SUID binary exploitation
-- Environment variable manipulation
-
-**Container Security:**
-- Docker container detection
-- Volume-based privilege escalation
-- Container escape through cron jobs
-- Shared volume exploitation
-
-**Cryptography & Encoding:**
-- Base64 encoding/decoding
-- Steganographic analysis
-- Whitespace encoding
-- Hash cracking (MD5, Argon2)
-
-## Tools & Frameworks
-
-- **Reconnaissance:** Nmap, enum4linux, showmount
-- **Web Analysis:** Burp Suite, FFUF, SQLMap
-- **Exploitation:** Hydra, Metasploit, custom scripts
-- **Post-Exploitation:** LinPEAS, pwncat, socat
-- **Container:** Docker, Gitea
-- **Misc:** ExifTool, John the Ripper, strings
-
-## Document Structure
-
-Each write-up follows a standardized penetration testing methodology:
-
-1. **Executive Summary** - High-level overview and attack path
-2. **Reconnaissance** - Initial enumeration and service discovery
-3. **Exploitation** - Vulnerability identification and exploitation
-4. **Post-Exploitation** - Lateral movement and credential discovery
-5. **Privilege Escalation** - Path to root access
-6. **Conclusion** - Key findings and lessons learned
-7. **Remediation** - Security recommendations
-
-## Format
-
-All documents are provided in PDF format with:
-- Professional typesetting
-- Syntax-highlighted code blocks
-- Detailed tool explanations
-- Step-by-step methodology
-- Comprehensive screenshots
-- Remediation guidance
+| Write-up | Attack path |
+|----------|-------------|
+| [Toss a Coin](Tek2-Hydra/TossACoin-WriteUp.pdf) (in French) | Directory fuzzing, cleartext credentials, sudo script abuse, PATH hijacking found with `strace`, sudo `perl` to root |
 
 ## Disclaimer
 
-These write-ups document security research conducted in authorized, isolated lab environments. All techniques are presented for educational purposes only. Unauthorized access to computer systems is illegal.
+Everything here was done in authorized lab environments (HTB, Epitech modules) or from public sources. The CVE analysis contains no exploit code.
 
 ## Author
 
-**M3RICK**  
-Epitech Toulouse
-
-## License
-
-This documentation is provided for educational purposes. Reproduction and distribution are permitted with attribution.
-
----
-
-*"The best defense is understanding the offense."*
+**M3RICK**, Epitech Toulouse
