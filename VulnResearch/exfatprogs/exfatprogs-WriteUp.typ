@@ -53,7 +53,7 @@
 
 exfatprogs is the set of user-space tools that create, check, repair and inspect exFAT filesystems on Linux. These tools read images that anyone can craft: a USB stick or an SD card is enough to hand them malicious bytes.
 
-I wrote libFuzzer harnesses against the shared library used by every tool. After *two harnesses plateaued without a crash*, I identified the cause (a checksum that rejects almost every mutated input), moved to a surface that sits before that checksum, and added UBSan. This found *undefined behaviour in `read_boot_sect()`*: two boot sector fields were used as shift counts before any range check.
+I wrote libFuzzer harnesses against the shared library used by every tool. After *two harnesses plateaued without a crash*, I moved to a surface they did not exercise on its own, the boot sector, and added UBSan. This found *undefined behaviour in `read_boot_sect()`*: two boot sector fields were used as shift counts before any range check.
 
 I sent a fix upstream. During review the maintainer pointed out one more function with the same pattern; I extended the fix, and it was applied and released in exfatprogs 1.4.5.
 
@@ -103,21 +103,21 @@ Two settings mattered in practice. The library logs every anomaly it sees, which
 
 = The plateau
 
-The first harness iterated the root directory entry by entry. Coverage flattened quickly, at 111 edges: the iterator was hit, but the code that interprets a complete file (a file entry `0x85` followed by its stream `0xC0` and name `0xC1` entries) was not. Switching to `exfat_lookup_file()` with a name that never matches forced the library to interpret every full set, and coverage moved again.
+The first harness iterated the root directory entry by entry. Coverage flattened quickly, at 111 edges: the iterator was hit, but the code that interprets a complete file (a file entry `0x85` followed by its stream `0xC0` and name `0xC1` entries) was not. Switching to `exfat_lookup_file()` with a name that never matches made the library check every file entry set in the directory (entry types, name length, entry count and name), and coverage moved again.
 
 A second harness walked subdirectories recursively, following each directory's start cluster, with a depth cap and an entry cap to keep every input fast. Both harnesses then saturated, at 193 and 147 edges, after roughly 17 million executions, with no crash.
 
-*The cause was a checksum.* Each file entry set carries a 16-bit checksum over its entries, and the library verifies it before parsing the set any further. A random mutation almost always breaks it, so almost every mutated input was rejected at the door.
+*They had run out of code to reach.* The lookup only checks a few fields of each set. Once those branches were covered, more executions could not find anything new on this path.
 
-#note("Two ways forward")[
-  Teach the fuzzer about the checksum (a custom mutator that recomputes it after each mutation), or fuzz a surface that is parsed before any checksum. I took the second one first: it was cheaper and the boot sector had not been explored on its own.
+#note("A wrong first explanation")[
+  I first blamed the 16-bit checksum carried by each file entry set, assuming the library rejected mutated sets before parsing them. Reading the code proved this wrong: the library only computes that checksum when it writes a set. It is verified in `fsck` and `dump`, which these harnesses do not link. The plateau was not a rejection, the path was exhausted.
 ]
 
 #figure(kind: image,
   flow(
     node[*raw dentry iterator* \ plateau at 111 edges],
     node[*`exfat_lookup_file()`* \ plateau at 193 edges],
-    node[*checksum wall* \ mutated sets rejected],
+    node[*path exhausted* \ no new edges],
     node(hl: true)[*boot sector + UBSan* \ bug found],
   ),
   caption: [The investigation in four steps, with coverage edges reported by libFuzzer.],
@@ -125,7 +125,7 @@ A second harness walked subdirectories recursively, following each directory's s
 
 = Changing surface: the boot sector
 
-The third target, `fuzz_exfat_boot`, stops right after the boot sector parse. No directory is read, so no checksum can reject an input, and every mutation reaches the geometry arithmetic.
+The third target, `fuzz_exfat_boot`, stops right after the boot sector parse. The boot sector had not been fuzzed on its own, and no directory is read here: every mutation goes straight to the geometry arithmetic.
 
 *AddressSanitizer reported nothing there*, and that was expected: the suspicious code computes sizes with shifts, and a bad shift is not a memory error. It is undefined behaviour in C, which UndefinedBehaviorSanitizer detects.
 
@@ -192,6 +192,6 @@ exfatprogs does not merge pull requests through GitHub. The maintainer applies p
 
 = Takeaways
 
-- *A plateau is information.* Flat coverage meant the inputs were being rejected somewhere, and finding where (the checksum) decided the next step.
+- *A plateau is information.* Flat coverage means either that inputs are rejected somewhere or that the path is exhausted. Checking which one in the code, rather than assuming it, decided the next step: here the path was exhausted, so the answer was a new surface.
 - *The sanitizer defines what can be found.* With ASan alone this bug was invisible. Choosing UBSan checks that match the code under test (size arithmetic) is what exposed it.
 - *Read around the bug.* The fuzzer found one function; reading the library found a second, and the maintainer's review a third. A fix that covers the whole pattern is worth more than one that silences the reproducer.
