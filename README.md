@@ -1,8 +1,14 @@
 # Write-Ups
 
-Security write-ups: forensic investigations, a vulnerability analysis with detection rules, and CTF machines. Each one starts from the evidence and explains how every conclusion was reached.
+Security write-ups: vulnerability research with an upstream fix, forensic investigations, a vulnerability analysis with detection rules, and CTF machines. Each one starts from the evidence and explains how every conclusion was reached.
 
 All documents are PDFs written in [Typst](https://typst.app). Sources are in the repository next to each PDF when available.
+
+## Vulnerability research
+
+| Write-up | Target | Content |
+|----------|--------|---------|
+| [exfatprogs](VulnResearch/exfatprogs/exfatprogs-WriteUp.pdf) | exfatprogs, the Linux exFAT tools (C) | Coverage-guided fuzzing with libFuzzer, why two harnesses plateaued (file entry checksum), switch to the boot sector with UBSan, root cause of an out-of-range shift, fix extended during maintainer review and shipped in exfatprogs 1.4.5. Harnesses: [exfatprogs-fuzzer](https://github.com/M3RICK/exfatprogs-fuzzer). |
 
 ## Vulnerability analysis and detection
 
