@@ -223,13 +223,15 @@ This was my first disk investigation. I did it with an AI tutor (Claude, Anthrop
 
 *The plan followed the SANS "Windows Forensic Analysis" poster* (FOR500, by Kathryn Hedley, SANS Institute, available at #link("https://www.sans.org/posters/windows-forensic-analysis")[sans.org/posters/windows-forensic-analysis]), category by category: System Information, Account Usage, Browser Activity, Application Execution, File and Folder Opening, Deleted Items and File Knowledge, Network Activity, External Device / USB. Persistence (services and event logs) and the reverse engineering of the payload were added because the case needed them.
 
-To be precise about what the AI did directly:
-- it decompiled the payload with Ghidra in headless mode, to guide me through the same functions in the Ghidra interface, which I then read myself;
-- it wrote the short Python decoder for the SRUM `SruDbIdMapTable` and ran the Prefetch deletion count on the USN journal (0 before, 214 after the service start);
-- it pointed me to some artifacts while I was lost in the filesystem timeline (the PowerShell history, `notes.txt`);
-- it drafted this report from the investigation journal; I reviewed it.
+I reverse engineered the payload in Ghidra myself: `OnStart`, the worker loop and the Prefetch deletion function. The AI had run an automated decompilation beforehand, only to know where to guide me.
 
-Every finding in this report was checked against the evidence. The mistakes below include two made by the AI tutor, marked as such: catching them was part of the work.
+To be precise about what the AI did directly:
+- it wrote the short Python decoder for the SRUM `SruDbIdMapTable` and ran the Prefetch deletion count on the USN journal (0 before, 214 after the service start);
+- it pointed me to some artifacts while I was lost in the filesystem timeline (the PowerShell history, `notes.txt`).
+
+The report was drafted with AI assistance from the investigation journal; I directed the changes and reviewed every claim against the evidence.
+
+The mistakes below include two made by the AI tutor, marked as such: catching them was part of the work.
 
 = Method and Mistakes
 
