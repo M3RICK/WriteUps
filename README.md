@@ -22,10 +22,11 @@ Detection rules written for this analysis, in [`CVE/PHP2Shell/detection/`](CVE/P
 - `php_worker_crash_burst.yml`: Sigma rule with correlation, burst of PHP worker segfaults or memory exhaustion
 - `php2shell_upload_progress.rules`: Suricata hunting rule, multipart POST carrying `PHP_SESSION_UPLOAD_PROGRESS`
 
-## DFIR investigations (HTB Sherlocks)
+## DFIR investigations
 
 | Write-up | Evidence | Content |
 |----------|----------|---------|
+| [SysInternalsCase](Ashemery/SysInternalsCase/SysInternalsCase-WriteUp.pdf) | Windows 10 disk image (E01) | Fake SysInternals download served from the real domain through a modified `hosts` file, after PowerShell disabled Defender and updates. Downloader proven executed without Prefetch (UserAssist, BAM, Amcache), persistent SYSTEM service (registry, events 7045 and 7040), dirty hive replay, WebCache and SRUM ESE databases, USN journal. Service reverse engineered in Ghidra: it wipes `C:\Windows\Prefetch` every second, confirmed on disk. Timeline, MITRE ATT&CK mapping, and a section on the mistakes made along the way. |
 | [Unit42](Sherlock/Unit42/Unit42-WriteUp.pdf) | Windows Sysmon logs (EVTX) | Workstation infected by a backdoored UltraVNC dropper. EVTX to JSON with `evtx_dump` and `jq`, malicious process identification (path, parent, double extension), Dropbox delivery confirmed by DNS and Mark of the Web, time stomping (event ID 2), two-stage MSI installation, timeline and MITRE ATT&CK mapping. |
 | [Brutus](Sherlock/Brutus/Brutus-WriteUp.pdf) | Linux `auth.log` and `wtmp` | Server compromised through SSH brute-force. Separating noise from signal, proving automation through volume and concurrency, PID pivoting, `auth.log` and `wtmp` correlation, backdoor account and persistence, timeline and MITRE ATT&CK mapping. |
 
@@ -55,7 +56,7 @@ Slides presenting the module: [Presentation-Chisel-Module.pdf](Tek3-Chisel/Prese
 
 ## Disclaimer
 
-Everything here was done in authorized lab environments (HTB, Epitech modules) or from public sources. The CVE analysis contains no exploit code.
+Everything here was done in authorized lab environments (HTB, Ashemery case datasets, Epitech modules) or from public sources. The CVE analysis contains no exploit code.
 
 ## Author
 
